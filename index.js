@@ -21,6 +21,7 @@ app.listen(process.env.PORT, ()=>{
 
 //Rutas
 app.get('/', function(req, res) {
+  console.log('get');
   return res.status(400).send({
       ok: true,
       message: 'hello world'
