@@ -1,9 +1,10 @@
+const bcryptjs = require('bcryptjs');
 const { response } = require('express');
 const User = require('../models/user');
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res = response) => {
     const users = await User.find();
-    res.status(400).send({
+    res.json({
         ok: true,
         message: 'Users',
         users
@@ -11,14 +12,20 @@ const getUsers = async (req, res) => {
 }
 
 const createUser = async (req, res = response) => {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
     try {
         const existEmail = await User.findOne({ email });
         if (existEmail) return erroRequest(res, 400, false, `El correo ya se encuentra registrado`);
+
         const user = new User(req.body);
+
+        // Encrypt password
+        const salt = bcryptjs.genSaltSync();
+        user.password = bcryptjs.hashSync(password, salt);
+
         await user.save();
-        res.status(400).send({
+        res.json({
             ok: false,
             user
         });
@@ -28,8 +35,43 @@ const createUser = async (req, res = response) => {
 
 }
 
+const updateUser = async (req, res = response) => {
+
+    // TODO: Validar token y comprobar si es correcto
+    const uid = req.params.id;
+
+    try {
+        const userDB = await User.findById(uid);
+        if (!userDB) return erroRequest(res, 400, false, `Usuario no encontrado`);
+
+        // Actualizaciones
+        const { password, google, email, ...fields } = req.body;
+
+        if (userDB.email !== email) {
+            const emailExist = User.findOne({ email });
+            if (emailExist) return erroRequest(res, 400, false, `Ya existe un usuario con ese correo`);
+        }
+
+        fields.email = email;
+
+        const userUpload = await User.findByIdAndUpdate(
+            uid,
+            fields,
+            { new: true, useFindAndModify: false }
+        );
+
+        res.json({
+            ok: true,
+            message: 'Users',
+            user: userUpload
+        });
+    } catch (error) {
+        erroRequest(res, 400, false, `Error inesperado... revisar los logs`);
+    }
+}
+
 const erroRequest = (res, codeStatus, status, message) => {
-    return res.status(codeStatus).send({
+    return res.status(codeStatus).json({
         ok: status,
         msg: message
     });
@@ -37,5 +79,6 @@ const erroRequest = (res, codeStatus, status, message) => {
 
 module.exports = {
     getUsers,
-    createUser
+    createUser,
+    updateUser
 }
