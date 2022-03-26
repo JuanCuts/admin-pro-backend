@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const { response } = require('express');
+const { generateJWT } = require('../helpers/jwt');
 const User = require('../models/user');
 
 const getUsers = async (req, res = response) => {
@@ -24,10 +25,13 @@ const createUser = async (req, res = response) => {
         const salt = bcryptjs.genSaltSync();
         user.password = bcryptjs.hashSync(password, salt);
 
+        const token = await generateJWT(user.id);
+
         await user.save();
         res.json({
             ok: true,
-            user
+            user,
+            token
         });
     } catch (error) {
         erroRequest(res, 400, false, `Error inesperado... revisar los logs`);

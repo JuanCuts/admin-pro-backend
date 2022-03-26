@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const { response } = require('express');
+const { generateJWT } = require('../helpers/jwt');
 const User = require('../models/user');
 
 const login = async (req, res = response) => {
@@ -13,10 +14,13 @@ const login = async (req, res = response) => {
         const validatePassword = bcryptjs.compareSync(password, userDB.password);
         if (!validatePassword) return erroRequest(res, 400, false, `Contraseña no valida`);
 
+
+        const token = await generateJWT(userDB.id);
+
         res.json({
             ok: true,
             message: 'HOLA LOGIN!!',
-            user: userDB
+            token
         });
     } catch (error) {
         erroRequest(res, 400, false, `Error inesperado... revisar los logs`);
