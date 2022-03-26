@@ -26,7 +26,7 @@ const createUser = async (req, res = response) => {
 
         await user.save();
         res.json({
-            ok: false,
+            ok: true,
             user
         });
     } catch (error) {
@@ -70,6 +70,27 @@ const updateUser = async (req, res = response) => {
     }
 }
 
+
+const deleteUser = async (req, res = response) => {
+
+    // TODO: Validar token y comprobar si es correcto
+    const uid = req.params.id;
+
+    try {
+        const userDB = await User.findById(uid);
+        if (!userDB) return erroRequest(res, 400, false, `Usuario no encontrado`);
+
+        await User.findByIdAndDelete(uid);
+
+        res.json({
+            ok: true,
+            message: 'User delete',
+        });
+    } catch (error) {
+        erroRequest(res, 400, false, `Error inesperado... revisar los logs`);
+    }
+}
+
 const erroRequest = (res, codeStatus, status, message) => {
     return res.status(codeStatus).json({
         ok: status,
@@ -80,5 +101,6 @@ const erroRequest = (res, codeStatus, status, message) => {
 module.exports = {
     getUsers,
     createUser,
-    updateUser
+    updateUser,
+    deleteUser
 }

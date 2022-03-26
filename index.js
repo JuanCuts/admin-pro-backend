@@ -28,3 +28,4 @@ app.listen(process.env.PORT, () => {
 
 //Rutas
 app.use('/api/users', require('./routes/user.router'));
+app.use('/api/login', require('./routes/auth.router'));
