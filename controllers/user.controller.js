@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const { response } = require('express');
 const { generateJWT } = require('../helpers/jwt');
+const { erroRequest } = require('../helpers/error-request');
 const User = require('../models/user');
 
 const getUsers = async (req, res = response) => {
@@ -8,7 +9,8 @@ const getUsers = async (req, res = response) => {
     res.json({
         ok: true,
         message: 'Users',
-        users
+        users,
+        uid: req.uid
     });
 }
 
@@ -93,13 +95,6 @@ const deleteUser = async (req, res = response) => {
     } catch (error) {
         erroRequest(res, 400, false, `Error inesperado... revisar los logs`);
     }
-}
-
-const erroRequest = (res, codeStatus, status, message) => {
-    return res.status(codeStatus).json({
-        ok: status,
-        msg: message
-    });
 }
 
 module.exports = {

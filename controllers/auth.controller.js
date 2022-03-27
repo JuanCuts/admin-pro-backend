@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const { response } = require('express');
+const { erroRequest } = require('../helpers/error-request');
 const { generateJWT } = require('../helpers/jwt');
 const User = require('../models/user');
 
@@ -26,13 +27,6 @@ const login = async (req, res = response) => {
         erroRequest(res, 400, false, `Error inesperado... revisar los logs`);
     }
 
-}
-
-const erroRequest = (res, codeStatus, status, message) => {
-    return res.status(codeStatus).json({
-        ok: status,
-        msg: message
-    });
 }
 
 module.exports = {
