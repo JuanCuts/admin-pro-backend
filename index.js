@@ -27,5 +27,7 @@ app.listen(process.env.PORT, () => {
 });
 
 //Rutas
-app.use('/api/users', require('./routes/user.router'));
 app.use('/api/login', require('./routes/auth.router'));
+app.use('/api/users', require('./routes/user.router'));
+app.use('/api/hospitals', require('./routes/hospital.router'));
+app.use('/api/doctors', require('./routes/doctor.router'));
