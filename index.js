@@ -31,3 +31,5 @@ app.use('/api/login', require('./routes/auth.router'));
 app.use('/api/users', require('./routes/user.router'));
 app.use('/api/hospitals', require('./routes/hospital.router'));
 app.use('/api/doctors', require('./routes/doctor.router'));
+app.use('/api/searches', require('./routes/serch.router'));
+app.use('/api/uploads', require('./routes/upload.router'));

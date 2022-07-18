@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const UserSchema = Schema({
     name: {
@@ -26,9 +27,13 @@ const UserSchema = Schema({
         type: Boolean,
         default: false
     },
-});
+},
+    { timestamps: true }
+);
+
 
 // Retorno visual
+UserSchema.plugin(mongoosePaginate);
 UserSchema.method('toJSON', function () {
     const { __v, _id, password, ...object } = this.toObject();
     object.uid = _id;

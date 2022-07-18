@@ -5,11 +5,11 @@ const { erroRequest } = require('../helpers/error-request');
 const User = require('../models/user');
 
 const getUsers = async (req, res = response) => {
-    const users = await User.find();
+    const users = await User.paginate();
     res.json({
         ok: true,
         message: 'Users',
-        users
+        ...users
     });
 }
 
